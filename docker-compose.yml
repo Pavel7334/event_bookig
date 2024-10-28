@@ -24,6 +24,8 @@ services:
       - app-network
     ports:
       - "5433:5432"
+    volumes:
+      - db_auth_data:/var/lib/postgresql/data
 
   event_service:
     build:
@@ -48,7 +50,13 @@ services:
       - app-network
     ports:
       - "5434:5432"
+    volumes:
+      - db_event_data:/var/lib/postgresql/data
 
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  db_auth_data:
+  db_event_data:
