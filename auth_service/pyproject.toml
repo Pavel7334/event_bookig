@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "event-booking"
+version = "0.1.0"
+description = ""
+authors = ["pavel.igonin <pavel.igonin@simbirsoft.com>"]
+packages = [{ include = "app"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pyjwt = "^2.0"
+fastapi = "^0.115.2"
+uvicorn = "^0.22.0"
+sqlalchemy = "^2.0.36"
+psycopg2-binary = "^2.9.10"
+pydantic = "^2.9.2"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = "^1.7.4"
+bcrypt = "^3.2.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

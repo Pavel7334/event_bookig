@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  auth_service:
+    build:
+      context: ./auth_service
+      dockerfile: Dockerfile
+    container_name: auth_service
+    ports:
+      - "8001:8001"
+    networks:
+      - app-network
+    depends_on:
+      - db_auth
+
+  db_auth:
+    image: postgres:13
+    container_name: db_auth
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: auth_db
+    networks:
+      - app-network
+    ports:
+      - "5433:5432"
+
+  event_service:
+    build:
+      context: ./event_service
+      dockerfile: Dockerfile
+    container_name: event_service
+    ports:
+      - "8002:8002"
+    networks:
+      - app-network
+    depends_on:
+      - db_event
+
+  db_event:
+    image: postgres:13
+    container_name: db_event
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: event_db
+    networks:
+      - app-network
+    ports:
+      - "5434:5432"
+
+networks:
+  app-network:
+    driver: bridge
