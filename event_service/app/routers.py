@@ -1,14 +1,21 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from . import crud, schemas
-from .database import get_db  # Импортируем функцию get_db
+from .database import get_db
+
+from prometheus_client import Counter
 
 router = APIRouter()
 
+# Определяем метрику
+events_created_total = Counter("events_created_total", "Total number of events created")
+
 
 @router.post("/events/", response_model=schemas.Event)
-def create_event(event: schemas.EventCreate, db: Session = Depends(get_db)):  # Используем get_db
-    return crud.create_event(db=db, event=event)
+def create_event(event: schemas.EventCreate, db: Session = Depends(get_db)):
+    new_event = crud.create_event(db=db, event=event)
+    events_created_total.inc()  # Увеличиваем счётчик при создании события
+    return new_event
 
 
 @router.get("/events/", response_model=list[schemas.Event])
