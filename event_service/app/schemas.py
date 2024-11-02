@@ -8,6 +8,9 @@ class EventBase(BaseModel):
     date: datetime
     location: str
 
+    class Config:
+        orm_mode = True  # Позволяет Pydantic моделям работать с ORM объектами SQLAlchemy
+
 
 class EventCreate(EventBase):
     pass
@@ -17,8 +20,8 @@ class EventUpdate(EventBase):
     pass
 
 
-class Event(EventBase):
-    id: int
+class EventGet(EventBase):
+    id: int  # Поле id должно присутствовать в Pydantic модели для response_model
 
     class Config:
         orm_mode = True
