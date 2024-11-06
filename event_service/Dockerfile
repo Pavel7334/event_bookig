@@ -4,6 +4,10 @@ FROM python:3.11-slim
 # Устанавливаем рабочую директорию
 WORKDIR /app
 
+# Копируем wait-for-it.sh для ожидания RabbitMQ перед запуском Celery
+COPY ../wait-for-it.sh /wait-for-it.sh
+RUN chmod +x /wait-for-it.sh
+
 # Скопируйте файлы pyproject.toml и poetry.lock в контейнер
 COPY ./pyproject.toml ./poetry.lock ./
 

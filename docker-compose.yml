@@ -83,6 +83,28 @@ services:
     depends_on:
       - prometheus
 
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+    networks:
+      - app-network
+
+  celery_worker:
+    build:
+      context: ./event_service
+      dockerfile: Dockerfile
+    command: [ "/wait-for-it.sh", "rabbitmq:5672", "--", "celery", "-A", "app.celery_config.celery_app", "worker", "--loglevel=info" ]
+    networks:
+      - app-network
+    depends_on:
+      - rabbitmq
+      - db_event
+
 networks:
   app-network:
     driver: bridge

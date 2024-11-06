@@ -1,6 +1,7 @@
 from . import crud
 from .database import get_db, redis_client
 from .models import Event
+from .tasks import send_notification
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app import models, schemas
@@ -121,3 +122,14 @@ def delete_event(event_id: int, db: Session = Depends(get_db)):
     redis_client.delete(cache_key)
 
     return deleted_event
+
+
+@router.post("/book_event/{event_id}")
+async def book_event(event_id: int, user_email: str, db: Session = Depends(get_db)):
+    event = crud.get_event(db, event_id)
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+
+    # Отправка уведомления асинхронно через Celery
+    send_notification.delay(user_email, event.name)
+    return {"status": "Бронирование успешно, уведомление отправлено"}
